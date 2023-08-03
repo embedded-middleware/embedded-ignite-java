@@ -7,6 +7,7 @@ import org.apache.ignite.configuration.ClientConnectorConfiguration;
 import org.apache.ignite.configuration.ConnectorConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.internal.processors.cache.persistence.wal.reader.StandaloneNoopCommunicationSpi;
+import org.apache.ignite.logger.slf4j.Slf4jLogger;
 import org.apache.ignite.spi.discovery.isolated.IsolatedDiscoverySpi;
 import org.assertj.core.util.Files;
 
@@ -57,6 +58,7 @@ public class EmbeddedIgniteServer {
         igniteConfiguration.setCommunicationSpi(new StandaloneNoopCommunicationSpi());
         igniteConfiguration.setIgniteInstanceName("local-ignite-server");
         igniteConfiguration.setConsistentId("local-ignite-server");
+        igniteConfiguration.setGridLogger(new Slf4jLogger());
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
         connectorConfiguration.setPort(jdbcPort);
         File jettyConfigFolder = Files.newTemporaryFolder();
