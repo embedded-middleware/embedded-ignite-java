@@ -50,9 +50,15 @@ public class EmbeddedIgniteServer {
             log.info("pid is {}", pid);
         }
         int[] ports = SocketUtil.getFreeServerPorts(3);
-        this.clientConnectorPort = ports[0];
-        this.jdbcPort = ports[1];
-        this.httpPort = ports[2];
+        if (this.clientConnectorPort == 0) {
+            this.clientConnectorPort = ports[0];
+        }
+        if (this.jdbcPort == 0) {
+            this.jdbcPort = ports[1];
+        }
+        if (this.httpPort == 0) {
+            this.httpPort = ports[2];
+        }
         log.info("clientConnectorPort is {} jdbcPort is {} httpPort is {}", clientConnectorPort, jdbcPort, httpPort);
         igniteConfiguration.setDiscoverySpi(new IsolatedDiscoverySpi());
         igniteConfiguration.setCommunicationSpi(new StandaloneNoopCommunicationSpi());

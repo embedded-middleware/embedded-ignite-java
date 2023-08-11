@@ -6,9 +6,10 @@
 
     <groupId>io.github.embedded-middleware</groupId>
     <artifactId>embedded-ignite-parent</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
     <modules>
         <module>embedded-ignite-core</module>
+        <module>embedded-ignite-junit5</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -20,14 +21,14 @@
         <!-- dependency -->
         <assertj.version>3.24.2</assertj.version>
         <ignite.version>2.13.0</ignite.version>
-        <junit.version>5.9.2</junit.version>
+        <junit.version>5.10.0</junit.version>
         <lombok.version>1.18.28</lombok.version>
         <log4j.version>2.20.0</log4j.version>
         <slf4j.version>1.7.25</slf4j.version>
         <!-- plugin -->
         <compiler-plugin.version>3.10.1</compiler-plugin.version>
         <checkstyle-plugin.version>3.2.0</checkstyle-plugin.version>
-        <puppycrawl.version>10.12.1</puppycrawl.version>
+        <puppycrawl.version>10.12.2</puppycrawl.version>
         <spotbugs-maven-plugin.version>4.7.3.4</spotbugs-maven-plugin.version>
         <surefire-plugin.version>3.1.0</surefire-plugin.version>
     </properties>
