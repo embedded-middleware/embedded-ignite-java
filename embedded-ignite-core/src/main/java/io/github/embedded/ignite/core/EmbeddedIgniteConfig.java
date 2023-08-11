@@ -6,13 +6,27 @@ import lombok.Setter;
 @Setter
 @Getter
 public class EmbeddedIgniteConfig {
-    private int port;
+    public int clientConnectorPort;
+
+    public int jdbcPort;
+
+    public int httpPort;
 
     public EmbeddedIgniteConfig() {
     }
 
-    public EmbeddedIgniteConfig port(int port) {
-        this.port = port;
+    public EmbeddedIgniteConfig clientConnectorPort(int clientConnectorPort) {
+        this.clientConnectorPort = clientConnectorPort;
+        return this;
+    }
+
+    public EmbeddedIgniteConfig jdbcPort(int jdbcPort) {
+        this.jdbcPort = jdbcPort;
+        return this;
+    }
+
+    public EmbeddedIgniteConfig httpPort(int httpPort) {
+        this.httpPort = httpPort;
         return this;
     }
 }
