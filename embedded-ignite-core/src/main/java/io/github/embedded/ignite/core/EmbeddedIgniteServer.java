@@ -1,5 +1,8 @@
 package io.github.embedded.ignite.core;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
@@ -11,16 +14,28 @@ import org.apache.ignite.logger.slf4j.Slf4jLogger;
 import org.apache.ignite.spi.discovery.isolated.IsolatedDiscoverySpi;
 import org.assertj.core.util.Files;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.management.ManagementFactory;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class EmbeddedIgniteServer {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    static {
+        MAPPER.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
+        MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
     private final EmbeddedIgniteConfig embeddedIgniteConfig;
 
     private final IgniteConfiguration igniteConfiguration;
@@ -76,6 +91,51 @@ public class EmbeddedIgniteServer {
         clientConnectorConfiguration.setPort(clientConnectorPort);
         igniteConfiguration.setClientConnectorConfiguration(clientConnectorConfiguration);
         this.ignite = Ignition.start(igniteConfiguration);
+        long start = System.nanoTime();
+        while (true) {
+            try {
+                if (checkIgniteStarted(httpPort)) {
+                    log.info("ignite started");
+                    break;
+                }
+                break;
+            } catch (Exception e) {
+                if (System.nanoTime() - start > TimeUnit.MINUTES.toNanos(3)) {
+                    log.error("start pulsar timeout, stopping pulsar");
+                    break;
+                }
+                log.info("starting pulsar.... exception is ", e);
+                TimeUnit.SECONDS.sleep(10);
+            }
+        }
+    }
+
+    private boolean checkIgniteStarted(int httpPort) throws Exception {
+        String url = String.format("http://localhost:%d/ignite?cmd=version", httpPort);
+
+        URL obj = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
+        connection.setRequestMethod("GET");
+
+        int responseCode = connection.getResponseCode();
+        if (responseCode != 200) {
+            throw new RuntimeException("Failed : HTTP error code : " + responseCode);
+        }
+
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(),
+                StandardCharsets.UTF_8))) {
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+
+            JsonNode jsonResponse = MAPPER.readTree(response.toString());
+            JsonNode errorNode = jsonResponse.get("error");
+
+            return errorNode == null || errorNode.isNull();
+        }
     }
 
     public int clientConnectorPort() {
