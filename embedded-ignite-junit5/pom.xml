@@ -9,7 +9,6 @@
         <version>0.0.3</version>
     </parent>
 
-    <groupId>io.examplescode</groupId>
     <artifactId>embedded-ignite-junit5</artifactId>
 
     <dependencies>
