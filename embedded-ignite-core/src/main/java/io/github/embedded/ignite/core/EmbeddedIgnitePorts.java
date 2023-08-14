@@ -1,4 +1,4 @@
-package io.github.embedded.ignite.junit5;
+package io.github.embedded.ignite.core;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

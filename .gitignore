@@ -16,3 +16,7 @@ dependency-reduced-pom.xml
 
 # log file
 logs/
+
+# ignite
+**/ignite/work
+**/ignite/README.txt
