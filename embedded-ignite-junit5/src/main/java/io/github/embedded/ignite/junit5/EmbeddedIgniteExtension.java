@@ -1,6 +1,7 @@
 package io.github.embedded.ignite.junit5;
 
 import io.github.embedded.ignite.core.EmbeddedIgniteConfig;
+import io.github.embedded.ignite.core.EmbeddedIgnitePorts;
 import io.github.embedded.ignite.core.EmbeddedIgniteServer;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
