@@ -25,6 +25,8 @@ import java.lang.management.ManagementFactory;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -64,15 +66,44 @@ public class EmbeddedIgniteServer {
             String pid = jvmName.substring(0, index);
             log.info("pid is {}", pid);
         }
-        int[] ports = SocketUtil.getFreeServerPorts(3);
-        if (this.clientConnectorPort == 0) {
-            this.clientConnectorPort = ports[0];
+
+        Set<Integer> exclusivePorts = new HashSet<>();
+        int neededPortCount = 0;
+
+        if (this.embeddedIgniteConfig.clientConnectorPort == 0) {
+            neededPortCount++;
+        } else {
+            exclusivePorts.add(this.embeddedIgniteConfig.clientConnectorPort);
+            this.clientConnectorPort = this.embeddedIgniteConfig.clientConnectorPort;
         }
-        if (this.jdbcPort == 0) {
-            this.jdbcPort = ports[1];
+
+        if (this.embeddedIgniteConfig.jdbcPort == 0) {
+            neededPortCount++;
+        } else {
+            exclusivePorts.add(this.embeddedIgniteConfig.jdbcPort);
+            this.jdbcPort = this.embeddedIgniteConfig.jdbcPort;
         }
-        if (this.httpPort == 0) {
-            this.httpPort = ports[2];
+
+        if (this.embeddedIgniteConfig.httpPort == 0) {
+            neededPortCount++;
+        } else {
+            exclusivePorts.add(this.embeddedIgniteConfig.httpPort);
+            this.httpPort = this.embeddedIgniteConfig.httpPort;
+        }
+
+        if (neededPortCount > 0) {
+            int[] ports = SocketUtil.getFreeServerPorts(neededPortCount, exclusivePorts);
+
+            int portIndex = 0;
+            if (this.embeddedIgniteConfig.clientConnectorPort == 0) {
+                this.clientConnectorPort = ports[portIndex++];
+            }
+            if (this.embeddedIgniteConfig.jdbcPort == 0) {
+                this.jdbcPort = ports[portIndex++];
+            }
+            if (this.embeddedIgniteConfig.httpPort == 0) {
+                this.httpPort = ports[portIndex++];
+            }
         }
         log.info("clientConnectorPort is {} jdbcPort is {} httpPort is {}", clientConnectorPort, jdbcPort, httpPort);
         igniteConfiguration.setDiscoverySpi(new IsolatedDiscoverySpi());
