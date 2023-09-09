@@ -1,5 +1,6 @@
 package io.github.embedded.ignite.junit4;
 
+import io.github.embedded.ignite.core.AnnotationUtil;
 import io.github.embedded.ignite.core.EmbeddedIgniteConfig;
 import io.github.embedded.ignite.core.EmbeddedIgnitePorts;
 import io.github.embedded.ignite.core.EmbeddedIgniteServer;
@@ -29,7 +30,7 @@ public class EmbeddedIgniteClassRule implements TestRule {
     private void setUp(Description description) throws Exception {
         EmbeddedIgniteConfig igniteConfig = new EmbeddedIgniteConfig();
 
-        EmbeddedIgnitePorts portsAnnotation = description.getTestClass().getAnnotation(EmbeddedIgnitePorts.class);
+        EmbeddedIgnitePorts portsAnnotation = AnnotationUtil.findPorts(description.getTestClass());
 
         if (portsAnnotation != null) {
             igniteConfig.setClientConnectorPort(portsAnnotation.clientConnectorPort());
