@@ -1,5 +1,6 @@
 package io.github.embedded.ignite.junit5;
 
+import io.github.embedded.ignite.core.AnnotationUtil;
 import io.github.embedded.ignite.core.EmbeddedIgniteConfig;
 import io.github.embedded.ignite.core.EmbeddedIgnitePorts;
 import io.github.embedded.ignite.core.EmbeddedIgniteServer;
@@ -15,7 +16,7 @@ public class EmbeddedIgniteExtension implements BeforeAllCallback, AfterAllCallb
         EmbeddedIgniteConfig igniteConfig = new EmbeddedIgniteConfig();
 
         // Retrieve annotation from the test class
-        EmbeddedIgnitePorts portsAnnotation = context.getRequiredTestClass().getAnnotation(EmbeddedIgnitePorts.class);
+        EmbeddedIgnitePorts portsAnnotation = AnnotationUtil.findPorts(context.getRequiredTestClass());
 
         if (portsAnnotation != null) {
             igniteConfig.setClientConnectorPort(portsAnnotation.clientConnectorPort());

@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EmbeddedIgnitePorts {
-    int clientConnectorPort();
-    int jdbcPort();
-    int httpPort();
+    int clientConnectorPort() default 0;
+    int jdbcPort() default 0;
+    int httpPort() default 0;
 }
