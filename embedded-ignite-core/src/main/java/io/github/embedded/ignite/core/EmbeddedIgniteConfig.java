@@ -12,6 +12,8 @@ public class EmbeddedIgniteConfig {
 
     public int httpPort;
 
+    public SqlEngineType sqlEngineType;
+
     public EmbeddedIgniteConfig() {
     }
 
@@ -27,6 +29,11 @@ public class EmbeddedIgniteConfig {
 
     public EmbeddedIgniteConfig httpPort(int httpPort) {
         this.httpPort = httpPort;
+        return this;
+    }
+
+    public EmbeddedIgniteConfig sqlEngineType(SqlEngineType sqlEngineType) {
+        this.sqlEngineType = sqlEngineType;
         return this;
     }
 }

@@ -6,9 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
+import org.apache.ignite.calcite.CalciteQueryEngineConfiguration;
 import org.apache.ignite.configuration.ClientConnectorConfiguration;
 import org.apache.ignite.configuration.ConnectorConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
+import org.apache.ignite.configuration.SqlConfiguration;
+import org.apache.ignite.indexing.IndexingQueryEngineConfiguration;
 import org.apache.ignite.internal.processors.cache.persistence.wal.reader.StandaloneNoopCommunicationSpi;
 import org.apache.ignite.logger.slf4j.Slf4jLogger;
 import org.apache.ignite.spi.discovery.isolated.IsolatedDiscoverySpi;
@@ -111,6 +114,7 @@ public class EmbeddedIgniteServer {
         igniteConfiguration.setIgniteInstanceName("local-ignite-server");
         igniteConfiguration.setConsistentId("local-ignite-server");
         igniteConfiguration.setGridLogger(new Slf4jLogger());
+        igniteConfiguration.setSqlConfiguration(createSqlConfiguration(this.embeddedIgniteConfig.sqlEngineType));
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
         connectorConfiguration.setPort(jdbcPort);
         File jettyConfigFolder = Files.newTemporaryFolder();
@@ -212,6 +216,16 @@ public class EmbeddedIgniteServer {
              BufferedWriter writer = new BufferedWriter(osw)) {
             writer.write(xmlContent);
         }
+    }
+
+    private static SqlConfiguration createSqlConfiguration(SqlEngineType sqlEngineType) {
+        SqlConfiguration sqlConfiguration = new SqlConfiguration();
+        if (SqlEngineType.CALCITE.equals(sqlEngineType)) {
+            sqlConfiguration.setQueryEnginesConfiguration(new CalciteQueryEngineConfiguration());
+        } else {
+            sqlConfiguration.setQueryEnginesConfiguration(new IndexingQueryEngineConfiguration());
+        }
+        return sqlConfiguration;
     }
 
     public void close() throws Exception {
