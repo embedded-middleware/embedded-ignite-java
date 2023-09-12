@@ -13,4 +13,17 @@ public class AnnotationUtil {
 
         return findPorts(testClass.getSuperclass());
     }
+
+    public static EmbeddedIgniteSqlEngine sqlEngine(Class<?> testClass) {
+        if (testClass == null) {
+            return null;
+        }
+
+        EmbeddedIgniteSqlEngine annotation = testClass.getAnnotation(EmbeddedIgniteSqlEngine.class);
+        if (annotation != null) {
+            return annotation;
+        }
+
+        return sqlEngine(testClass.getSuperclass());
+    }
 }
